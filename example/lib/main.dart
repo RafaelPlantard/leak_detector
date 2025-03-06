@@ -323,7 +323,7 @@ class GuaranteedLeakPage extends StatefulWidget {
   State<GuaranteedLeakPage> createState() => _GuaranteedLeakPageState();
 }
 
-class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
+final class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
   // Static reference to hold the widget
   static GuaranteedLeakPage? staticReference;
 
@@ -349,17 +349,17 @@ class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
 
     // Start a timer that never ends
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      print('Timer tick: ${DateTime.now()}');
+      debugPrint('Timer tick: ${DateTime.now()}');
     });
 
     // Subscribe to a stream that never ends
     _subscription = Stream.periodic(Duration(seconds: 2)).listen((_) {
-      print('Stream event: ${DateTime.now()}');
+      debugPrint('Stream event: ${DateTime.now()}');
     });
 
     // Create a callback that holds reference to this widget
     _callback = () {
-      print('Callback executed: ${widget.toString()}');
+      debugPrint('Callback executed: ${widget.toString()}');
     };
 
     // Add the callback to a global list
