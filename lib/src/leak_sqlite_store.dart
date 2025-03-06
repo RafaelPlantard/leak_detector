@@ -2,34 +2,28 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:leak_detector/src/leak_data_store.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:path/path.dart';
 
 import 'leak_data.dart';
 
-///数据库升级表[版本号 | 数据库版本 | 备注
-/// 1.0.0 | 1 | 创建数据库
-const int _kLeakDatabaseVersion = 1;
-
 ///database
 class _LeakDataBase {
-  static Future<Database> _openDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), 'leak_recording.db'),
-      version: _kLeakDatabaseVersion,
-      onCreate: (Database db, int version) {
-        // Run the CREATE TABLE statement on the database.
-        return db.execute(
-          "CREATE TABLE IF NOT EXISTS ${_LeakRecordingTable._kTableName}("
-          "${_LeakRecordingTable._kId} TEXT NOT NULL PRIMARY KEY, "
-          "${_LeakRecordingTable._kGCRootType} TEXT, "
-          "${_LeakRecordingTable._kLeakPathJson} TEXT)",
-        );
-      },
-      onUpgrade: (Database db, int oldVersion, int newVersion) async {},
+  static Database _openDatabase() {
+    final dbPath = join(Directory.current.path, 'leak_recording.db');
+    final db = sqlite3.open(dbPath);
+
+    db.execute(
+      "CREATE TABLE IF NOT EXISTS ${_LeakRecordingTable._kTableName}("
+      "${_LeakRecordingTable._kId} TEXT NOT NULL PRIMARY KEY, "
+      "${_LeakRecordingTable._kGCRootType} TEXT, "
+      "${_LeakRecordingTable._kLeakPathJson} TEXT)",
     );
+
+    return db;
   }
 }
 
@@ -44,75 +38,55 @@ class _LeakRecordingTable {
 ///[_LeakRecordingTable] Helper
 class LeakedRecordSQLiteStore implements LeakedRecordStore {
   static LeakedRecordSQLiteStore? _instance;
-
-  Future<Database> get database => _LeakDataBase._openDatabase();
+  final Database _db;
 
   factory LeakedRecordSQLiteStore() {
     _instance ??= LeakedRecordSQLiteStore._();
     return _instance!;
   }
 
-  LeakedRecordSQLiteStore._();
+  LeakedRecordSQLiteStore._() : _db = _LeakDataBase._openDatabase();
 
   Future<List<LeakedInfo>> _queryAll() async {
-    // Get a reference to the database.
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      _LeakRecordingTable._kTableName,
+    final ResultSet resultSet = _db.select(
+      'SELECT * FROM ${_LeakRecordingTable._kTableName}',
     );
-    if (maps.isNotEmpty) {
-      return maps.map((dataMap) => _toData(dataMap)).toList();
-    } else {
-      return [];
-    }
+
+    return resultSet.map((row) => _toData(row)).toList();
   }
 
   Future<void> _insert(LeakedInfo data) async {
-    final Database db = await database;
-    await db.insert(
-      _LeakRecordingTable._kTableName,
-      _toDatabaseMap(data),
-      conflictAlgorithm: ConflictAlgorithm.replace, //冲突替换
+    _db.execute(
+      'INSERT OR REPLACE INTO ${_LeakRecordingTable._kTableName} '
+      '(${_LeakRecordingTable._kId}, ${_LeakRecordingTable._kGCRootType}, ${_LeakRecordingTable._kLeakPathJson}) '
+      'VALUES (?, ?, ?)',
+      [data.timestamp.toString(), data.gcRootType, data.retainingPathJson],
     );
   }
 
   Future<void> _insertAll(List<LeakedInfo> data) async {
-    final Database db = await database;
-    data.forEach((info) async {
-      await db.insert(
-        _LeakRecordingTable._kTableName,
-        _toDatabaseMap(info),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    });
+    final stmt = _db.prepare(
+      'INSERT OR REPLACE INTO ${_LeakRecordingTable._kTableName} '
+      '(${_LeakRecordingTable._kId}, ${_LeakRecordingTable._kGCRootType}, ${_LeakRecordingTable._kLeakPathJson}) '
+      'VALUES (?, ?, ?)',
+    );
+
+    for (var info in data) {
+      stmt.execute([info.timestamp.toString(), info.gcRootType, info.retainingPathJson]);
+    }
+
+    stmt.dispose();
   }
 
   Future<void> _deleteById(int id) async {
-    // Get a reference to the database (获得数据库引用)
-    final db = await database;
-    // Remove the Data from the Database.
-    await db.delete(
-      _LeakRecordingTable._kTableName,
-      // Use a `where` clause to delete a specific meeting (使用 `where` 语句删除指定的id).
-      where: "${_LeakRecordingTable._kId} = ?",
-      // Pass the Data's id as a whereArg to prevent SQL injection (通过 `whereArg` 将 id 传递给 `delete` 方法，以防止 SQL 注入)
-      whereArgs: [id.toString()],
+    _db.execute(
+      'DELETE FROM ${_LeakRecordingTable._kTableName} WHERE ${_LeakRecordingTable._kId} = ?',
+      [id.toString()],
     );
   }
 
   Future<void> _deleteAll() async {
-    // Get a reference to the database (获得数据库引用)
-    final db = await database;
-    // Remove the Data from the Database.
-    await db.delete(_LeakRecordingTable._kTableName);
-  }
-
-  Map<String, dynamic> _toDatabaseMap(LeakedInfo data) {
-    return {
-      _LeakRecordingTable._kId: data.timestamp.toString(),
-      _LeakRecordingTable._kGCRootType: data.gcRootType,
-      _LeakRecordingTable._kLeakPathJson: data.retainingPathJson,
-    };
+    _db.execute('DELETE FROM ${_LeakRecordingTable._kTableName}');
   }
 
   LeakedInfo _toData(Map<String, dynamic> dataMap) {
