@@ -22,15 +22,15 @@ class LeakDetector {
   static int? maxRetainingPath;
 
   ///detected object
-  Map<String, Expando> _watchGroup = {};
+  final Map<String, Expando> _watchGroup = {};
 
   ///Queue to detect memory leaks, first in, first out
-  Queue<DetectorTask> _checkTaskQueue = Queue();
+  final Queue<DetectorTask> _checkTaskQueue = Queue();
 
   ///Notify after a memory leak
-  StreamController<LeakedInfo> _onLeakedStreamController =
+  final StreamController<LeakedInfo> _onLeakedStreamController =
       StreamController.broadcast();
-  StreamController<DetectorEvent> _onEventStreamController =
+  final StreamController<DetectorEvent> _onEventStreamController =
       StreamController.broadcast();
 
   DetectorTask? _currentTask;
@@ -120,7 +120,7 @@ class LeakDetector {
         (object is String) ||
         (object is Pointer) ||
         (object is Struct)) {
-      throw new ArgumentError.value(object,
+      throw ArgumentError.value(object,
           "Expandos are not allowed on strings, numbers, booleans, null, Pointers, Structs or Unions.");
     }
   }

@@ -18,7 +18,7 @@ abstract class _Task<T> {
     try {
       result = await run();
     } catch (e) {
-      print('_Task $e');
+      debugPrint('_Task $e');
     } finally {
       done(result);
     }

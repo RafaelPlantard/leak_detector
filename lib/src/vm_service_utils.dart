@@ -4,6 +4,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
 import 'package:vm_service/utils.dart';
@@ -56,8 +57,8 @@ class VmServerUtils {
         } catch (error) {
           if (error is SocketException) {
             //dds is enable
-            print('vm_service connection refused, Try:');
-            print('run \'flutter run\' with --disable-dds to disable dds.');
+            debugPrint('vm_service connection refused, Try:');
+            debugPrint('run \'flutter run\' with --disable-dds to disable dds.');
           }
         }
       }
@@ -66,9 +67,7 @@ class VmServerUtils {
   }
 
   Future<VM?> getVM() async {
-    if (_vm == null) {
-      _vm = await (await getVmService())?.getVM();
-    }
+    _vm ??= await (await getVmService())?.getVM();
     return _vm;
   }
 
@@ -127,7 +126,7 @@ class VmServerUtils {
       final valueRef = InstanceRef.parse(valueResponse.json);
       return valueRef?.id;
     } catch (e) {
-      print('getObjectId $e');
+      debugPrint('getObjectId $e');
     } finally {
       _objCache.remove(key);
     }
@@ -146,7 +145,9 @@ class VmServerUtils {
             await vms.invoke(mainIsolate.id!, targetId, method, argumentIds);
         final valueRef = InstanceRef.parse(valueResponse.json);
         return valueRef?.valueAsString;
-      } catch (e) {}
+      } catch (e) {
+        debugPrint('invokeMethod error:$e');
+      }
     }
     return null;
   }
@@ -161,7 +162,7 @@ class VmServerUtils {
         Obj object = await vms.getObject(mainIsolate.id!, objId);
         return object;
       } catch (e) {
-        print('getObjectInstanceById error:$e');
+        debugPrint('getObjectInstanceById error:$e');
       }
     }
     return null;
@@ -181,7 +182,7 @@ class VmServerUtils {
           return instance;
         }
       } catch (e) {
-        print('getInstanceByObject error:$e');
+        debugPrint('getInstanceByObject error:$e');
       }
     }
     return null;
@@ -216,7 +217,7 @@ String generateNewKey() {
   return "${++_key}";
 }
 
-Map<String, dynamic> _objCache = Map();
+Map<String, dynamic> _objCache = {};
 
 /// 顶级函数，根据 key 返回指定对象
 dynamic keyToObj(String key) {

@@ -31,8 +31,7 @@ const double _infoCardMinHeight = 180;
 class LeakPreviewPage extends StatefulWidget {
   final List<LeakedInfo> leakInfoList;
 
-  const LeakPreviewPage({Key? key, required this.leakInfoList})
-      : super(key: key);
+  const LeakPreviewPage({super.key, required this.leakInfoList});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,7 +41,7 @@ class LeakPreviewPage extends StatefulWidget {
 
 class _LeakPreviewPageState extends State<LeakPreviewPage> {
   int _currentIndex = 0;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -60,7 +59,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
     final paddingBottom = MediaQuery.of(context).padding.bottom;
     return Material(
       color: Colors.transparent,
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height * 6 / 7,
         child: Column(
           children: [
@@ -137,7 +136,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                       child: TextButton(
                         onPressed: _deleteFromDatabase,
                         style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
+                          padding: WidgetStateProperty.resolveWith(
                               (_) => EdgeInsets.all(0)),
                         ),
                         child: Column(
@@ -145,7 +144,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                           children: [
                             Icon(
                               Icons.delete_forever_outlined,
-                              color: Colors.red.withOpacity(0.8),
+                              color: Colors.red.withValues(alpha: 0.8),
                               size: 23,
                             ),
                             Text(
@@ -654,7 +653,7 @@ class NodeCustomPainter extends CustomPainter {
 class _ClassInfoButton extends StatefulWidget {
   final RetainingNode nodeData;
 
-  const _ClassInfoButton({Key? key, required this.nodeData}) : super(key: key);
+  const _ClassInfoButton({required this.nodeData});
 
   @override
   State<StatefulWidget> createState() {

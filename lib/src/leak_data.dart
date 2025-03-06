@@ -17,9 +17,7 @@ class LeakedInfo {
   int? timestamp;
 
   LeakedInfo(this.retainingPath, this.gcRootType, {this.timestamp}) {
-    if (timestamp == null) {
-      timestamp = DateTime.now().millisecondsSinceEpoch;
-    }
+    timestamp ??= DateTime.now().millisecondsSinceEpoch;
   }
 
   bool get isNotEmpty => retainingPath.isNotEmpty;
