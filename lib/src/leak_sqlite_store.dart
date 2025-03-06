@@ -2,19 +2,19 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:leak_detector/src/leak_data.dart';
 import 'package:leak_detector/src/leak_data_store.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path show join;
+import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
 import 'package:sqlite3/sqlite3.dart';
 
 ///database
 class _LeakDataBase {
   static Future<Database> _openDatabase() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final dbPath = '${appDir.path}/leak_recording.db';
-    final db = sqlite3.open(dbPath);
+    final docsDir = await getApplicationDocumentsDirectory();
+    final filename = path.join(docsDir.path, 'leak_recording.db');
+    final db = sqlite3.open(filename);
 
     db.execute(
       'CREATE TABLE IF NOT EXISTS ${_LeakRecordingTable._kTableName}('
