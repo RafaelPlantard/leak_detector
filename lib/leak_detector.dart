@@ -6,11 +6,11 @@ library;
 import 'src/leak_data.dart';
 import 'src/leak_data_store.dart';
 
+export 'src/leak_data.dart';
 export 'src/leak_detector.dart';
+export 'src/leak_navigator_observer.dart';
 export 'src/leak_state_mixin.dart';
 export 'src/view/leak_preview_page.dart';
-export 'src/leak_data.dart';
-export 'src/leak_navigator_observer.dart';
 
 ///read historical leaked data
 Future<List<LeakedInfo>> getLeakedRecording() => LeakedRecordStore().getAll();

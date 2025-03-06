@@ -6,14 +6,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:vm_service/vm_service.dart';
 
-import 'leak_detector.dart';
 import 'leak_analyzer.dart';
 import 'leak_data.dart';
+import 'leak_detector.dart';
 import 'vm_service_utils.dart';
 
 ///check leak task
 abstract class _Task<T> {
-  void start() async {
+  Future<void> start() async {
     T? result;
     try {
       result = await run();
@@ -75,7 +75,7 @@ class DetectorTask extends _Task {
     for (var weakProperty in weakPropertyList) {
       if (weakProperty != null) {
         final leakedInstance = await _getWeakPropertyKey(weakProperty.id);
-        if (leakedInstance != null && leakedInstance.id != "objects/null") {
+        if (leakedInstance != null && leakedInstance.id != 'objects/null') {
           final start = DateTime.now();
           sink?.add(DetectorEvent(DetectorEventType.startAnalyze));
           LeakedInfo? leakInfo = await compute(

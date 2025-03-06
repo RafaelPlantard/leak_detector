@@ -50,12 +50,12 @@ class _CardWidgetState extends State<_CardWidget>
     return CustomSingleChildLayout(
       delegate: _BottomWindowLayout(moveHeight),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
         ),
         child: Material(
-          color: Color(0xFF353535),
+          color: const Color(0xFF353535),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -76,14 +76,14 @@ class _CardWidgetState extends State<_CardWidget>
                     : _popIfCan(details.primaryVelocity ?? 0.0),
                 onVerticalDragCancel: () => isAnimForward ? {} : _popIfCan(),
                 child: Container(
-                  color: Color(0xFF353535),
+                  color: const Color(0xFF353535),
                   height: 40,
                   child: Center(
                     //上下拖动的横线
                     child: Container(
                       height: 4,
                       width: 35,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color.fromRGBO(255, 225, 225, 1),
                         borderRadius: BorderRadius.all(Radius.circular(6)),
                       ),
@@ -115,7 +115,7 @@ class _CardWidgetState extends State<_CardWidget>
       //没有滑动到关闭弹窗阀值，执行归位动画。
       isAnimForward = true; //动画执行状态
       AnimationController controller = AnimationController(
-          vsync: this, duration: Duration(milliseconds: 200));
+          vsync: this, duration: const Duration(milliseconds: 200));
       CurvedAnimation curvedAnimation =
           CurvedAnimation(parent: controller, curve: Curves.easeOut);
       Animation animation =

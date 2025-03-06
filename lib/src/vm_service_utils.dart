@@ -5,9 +5,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
-import 'package:vm_service/utils.dart';
 
 const String _findLibrary = 'package:leak_detector/src/vm_service_utils.dart';
 
@@ -122,7 +122,7 @@ class VmServerUtils {
 
     try {
       Response valueResponse = await vms
-          .invoke(mainIsolate.id!, library.id!, "keyToObj", [keyRef!.id!]);
+          .invoke(mainIsolate.id!, library.id!, 'keyToObj', [keyRef!.id!]);
       final valueRef = InstanceRef.parse(valueResponse.json);
       return valueRef?.id;
     } catch (e) {
@@ -214,7 +214,7 @@ int _key = 0;
 
 /// 顶级函数，必须常规方法，生成 key 用
 String generateNewKey() {
-  return "${++_key}";
+  return '${++_key}';
 }
 
 Map<String, dynamic> _objCache = {};

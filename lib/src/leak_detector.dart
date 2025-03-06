@@ -7,8 +7,8 @@ import 'dart:ffi';
 
 import 'package:flutter/widgets.dart';
 
-import 'leak_detector_task.dart';
 import 'leak_data.dart';
+import 'leak_detector_task.dart';
 import 'leak_record_handler.dart';
 import 'vm_service_utils.dart';
 
@@ -121,7 +121,7 @@ class LeakDetector {
         (object is Pointer) ||
         (object is Struct)) {
       throw ArgumentError.value(object,
-          "Expandos are not allowed on strings, numbers, booleans, null, Pointers, Structs or Unions.");
+          'Expandos are not allowed on strings, numbers, booleans, null, Pointers, Structs or Unions.');
     }
   }
 }

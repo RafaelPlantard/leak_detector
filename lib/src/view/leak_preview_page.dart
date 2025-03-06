@@ -2,8 +2,9 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import '../leak_data_store.dart';
+
 import '../leak_data.dart';
+import '../leak_data_store.dart';
 import 'bottom_popup_card.dart';
 import 'popup_window.dart';
 
@@ -65,8 +66,8 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
           children: [
             Container(
               height: 40,
-              color: Color(0xFF3E5E87),
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              color: const Color(0xFF3E5E87),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               alignment: Alignment.centerLeft,
               child: Row(
                 children: [
@@ -74,7 +75,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                     child: Text(
                       'GcRoot type:${gcRootType ?? ''}',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFFFFFFFF),
                         fontSize: 15,
                         fontWeight: FontWeight.normal,
@@ -83,7 +84,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                   ),
                   Text(
                     '${showDate.month}/${showDate.day} ${showDate.hour}:${showDate.minute}:${showDate.second}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
@@ -96,8 +97,8 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
               child: Scrollbar(
                 controller: _scrollController,
                 child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.all(0),
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(0),
                   controller: _scrollController,
                   itemBuilder: (BuildContext context, int index) {
                     return _node(
@@ -114,7 +115,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
             Visibility(
               visible: true,
               child: Container(
-                color: Color(0xFF3F3F3F),
+                color: const Color(0xFF3F3F3F),
                 padding: EdgeInsets.only(bottom: paddingBottom),
                 height: 50 + paddingBottom,
                 child: Row(
@@ -124,7 +125,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                         visible: _currentIndex > 0,
                         child: TextButton(
                           onPressed: _showPrevious,
-                          child: Icon(
+                          child: const Icon(
                             Icons.navigate_before_rounded,
                             color: Colors.white70,
                             size: 30,
@@ -137,7 +138,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                         onPressed: _deleteFromDatabase,
                         style: ButtonStyle(
                           padding: WidgetStateProperty.resolveWith(
-                              (_) => EdgeInsets.all(0)),
+                              (_) => const EdgeInsets.all(0)),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +150,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                             ),
                             Text(
                               '${_currentIndex + 1}/${widget.leakInfoList.length}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 11,
                                 fontWeight: FontWeight.normal,
@@ -164,7 +165,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                         visible: _currentIndex < widget.leakInfoList.length - 1,
                         child: TextButton(
                           onPressed: _showNext,
-                          child: Icon(
+                          child: const Icon(
                             Icons.navigate_next_rounded,
                             color: Colors.white70,
                             size: 30,
@@ -201,11 +202,11 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
           height: height,
           // color: node.important ? Color(0xFF4D6673) : Color(0xFF5F5F5F),
           color: isFirst
-              ? Color(0xFF9D7E58)
+              ? const Color(0xFF9D7E58)
               : node.closureInfo != null
-                  ? Color(0xFF4D6673)
-                  : Color(0xFF5F5F5F),
-          padding: EdgeInsets.symmetric(horizontal: 20),
+                  ? const Color(0xFF4D6673)
+                  : const Color(0xFF5F5F5F),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: [
               SizedBox(
@@ -215,7 +216,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                   painter: NodeCustomPainter(!isFirst, !last, lineColor),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               if (node.closureInfo == null)
                 Expanded(
                   child: RichText(
@@ -223,7 +224,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                       text: node.clazz,
                       children: [
                         if (hasField)
-                          TextSpan(
+                          const TextSpan(
                             text: '.',
                           ),
                         if (hasField)
@@ -232,8 +233,8 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                             style: TextStyle(
                               // color: node.important ? Color(0xFFE4EB84) : Color(0xFFC0BEEA),
                               color: isFirst
-                                  ? Color(0xFFE4EB84)
-                                  : Color(0xFFC0BEEA),
+                                  ? const Color(0xFFE4EB84)
+                                  : const Color(0xFFC0BEEA),
                               fontSize: 16,
                               fontWeight: FontWeight.normal,
                             ),
@@ -242,7 +243,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                           TextSpan(
                             text:
                                 ' (${_getNodeTypeString(node.leakedNodeType)})',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xffebcf81),
                               fontSize: 14,
                               fontWeight: FontWeight.normal,
@@ -251,7 +252,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                       ],
                       style: TextStyle(
                         // color: node.important ? Color(0xFFFFFFFF) : Color(0xFFF5F5F5),
-                        color: isFirst ? Color(0xFFFFFFFF) : Color(0xFFF5F5F5),
+                        color: isFirst ? const Color(0xFFFFFFFF) : const Color(0xFFF5F5F5),
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
                       ),
@@ -273,14 +274,14 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                             TextSpan(
                               text:
                                   '\u00A0\u00A0funName:${node.closureInfo?.closureFunctionName ?? ''}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFFC0BEEA),
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
                           ],
-                          style: TextStyle(
+                          style: const TextStyle(
                             // color: node.important ? Color(0xFFFFFFFF) : Color(0xFFF5F5F5),
                             color: Color(0xFF7AD1B4),
                             fontSize: 14,
@@ -300,14 +301,14 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                               TextSpan(
                                 text:
                                     '#${node.closureInfo?.funLine}:${node.closureInfo?.funColumn}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFFE7D28F),
                                   fontSize: 13,
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
                           ],
-                          style: TextStyle(
+                          style: const TextStyle(
                             // color: node.important ? Color(0xFFE4EB84) : Color(0xFFC0BEEA),
                             color: Color(0xFFC0BEEA),
                             fontSize: 16,
@@ -333,7 +334,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
         //声明代码
         if (showSourceCodeLocation)
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Stack(
               children: [
                 Positioned(
@@ -351,22 +352,22 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   alignment: Alignment.centerLeft,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFFAFAFA), width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      color: Color(0xFF4C4C4C),
+                      border: Border.all(color: const Color(0xFFFAFAFA), width: 1),
+                      borderRadius: const BorderRadius.all(Radius.circular(4)),
+                      color: const Color(0xFF4C4C4C),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: RichText(
                       text: TextSpan(
                         text: node.sourceCodeLocation?.code ?? '',
                         children: [
                           TextSpan(
                             text: '\n\n${node.sourceCodeLocation?.uri ?? ''}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFFE2E2E2),
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
@@ -376,7 +377,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                             TextSpan(
                               text:
                                   '#${node.sourceCodeLocation?.className ?? ''}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFF7BB2DF),
                                 fontSize: 17,
                                 fontWeight: FontWeight.normal,
@@ -386,14 +387,14 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                             TextSpan(
                               text:
                                   '#${node.sourceCodeLocation?.lineNum}:${node.sourceCodeLocation?.columnNum}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFFE7D28F),
                                 fontSize: 17,
                                 fontWeight: FontWeight.normal,
                               ),
                             )
                         ],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFFFB74D),
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
@@ -410,7 +411,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
         //列表位置
         if (node.parentIndex != null)
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Stack(
               children: [
                 Positioned(
@@ -428,29 +429,29 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   alignment: Alignment.centerLeft,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFFAFAFA), width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      color: Color(0xff225fa2),
+                      border: Border.all(color: const Color(0xFFFAFAFA), width: 1),
+                      borderRadius: const BorderRadius.all(Radius.circular(4)),
+                      color: const Color(0xff225fa2),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: RichText(
                       text: TextSpan(
                         text: 'List index: ',
                         children: [
                           TextSpan(
                             text: '${node.parentIndex}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFFE2E2E2),
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
                             ),
                           )
                         ],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFFFB74D),
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
@@ -467,7 +468,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
         //map 中的 key
         if (node.parentKey != null)
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Stack(
               children: [
                 Positioned(
@@ -485,29 +486,29 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   alignment: Alignment.centerLeft,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFFAFAFA), width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      color: Color(0xff684327),
+                      border: Border.all(color: const Color(0xFFFAFAFA), width: 1),
+                      borderRadius: const BorderRadius.all(Radius.circular(4)),
+                      color: const Color(0xff684327),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: RichText(
                       text: TextSpan(
                         text: 'Map key: ',
                         children: [
                           TextSpan(
                             text: '${node.parentKey}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFFE2E2E2),
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
                             ),
                           )
                         ],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFFFB74D),
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
@@ -523,7 +524,7 @@ class _LeakPreviewPageState extends State<LeakPreviewPage> {
           ),
         if (hasMoreInfo)
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(
               width: 30,
               height: 18,
@@ -612,7 +613,7 @@ class NodeCustomPainter extends CustomPainter {
   final Color color;
 
   final Paint _paint = Paint()
-    ..color = Color(0xff1e7ce4)
+    ..color = const Color(0xff1e7ce4)
     ..style = PaintingStyle.fill
     ..strokeWidth = _strokeWidth;
 
@@ -669,7 +670,7 @@ class _ClassInfoButtonState extends State<_ClassInfoButton> {
     return GestureDetector(
       onTap: () {
         PopupWindow.show(context, _infoCard(widget.nodeData),
-            offset: Offset(-_infoCardWidth, 0), onResult: (_) {
+            offset: const Offset(-_infoCardWidth, 0), onResult: (_) {
           setState(() {
             _selected = false;
           });
@@ -692,12 +693,12 @@ class _ClassInfoButtonState extends State<_ClassInfoButton> {
   Widget _infoCard(RetainingNode node) {
     return Container(
       width: _infoCardWidth,
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 9),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 9),
+      decoration: const BoxDecoration(
         color: Color(0xFF686C72),
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
           minHeight: _infoCardMinHeight, maxHeight: _infoCardMinHeight * 2),
       child: SingleChildScrollView(
         child: Column(
@@ -705,16 +706,16 @@ class _ClassInfoButtonState extends State<_ClassInfoButton> {
           children: [
             Text(
               node.closureInfo?.libraries ?? node.libraries ?? '',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFFFFB74D),
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               node.closureInfo?.toString() ?? node.string ?? '',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFFDCE9FA),
                 fontSize: 15,
                 fontWeight: FontWeight.w700,

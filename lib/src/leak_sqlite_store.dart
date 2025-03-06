@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:leak_detector/src/leak_data_store.dart';
-import 'package:sqlite3/sqlite3.dart';
 import 'package:path/path.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 import 'leak_data.dart';
 
@@ -17,10 +17,10 @@ class _LeakDataBase {
     final db = sqlite3.open(dbPath);
 
     db.execute(
-      "CREATE TABLE IF NOT EXISTS ${_LeakRecordingTable._kTableName}("
-      "${_LeakRecordingTable._kId} TEXT NOT NULL PRIMARY KEY, "
-      "${_LeakRecordingTable._kGCRootType} TEXT, "
-      "${_LeakRecordingTable._kLeakPathJson} TEXT)",
+      'CREATE TABLE IF NOT EXISTS ${_LeakRecordingTable._kTableName}('
+      '${_LeakRecordingTable._kId} TEXT NOT NULL PRIMARY KEY, '
+      '${_LeakRecordingTable._kGCRootType} TEXT, '
+      '${_LeakRecordingTable._kLeakPathJson} TEXT)',
     );
 
     return db;
