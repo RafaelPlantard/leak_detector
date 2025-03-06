@@ -22,6 +22,7 @@ final class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     LeakDetector().init(maxRetainingPath: 300);
     LeakDetector().onLeakedStream.listen((LeakedInfo info) {
       // logging to console

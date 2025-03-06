@@ -4,11 +4,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:leak_detector/src/leak_data.dart';
 import 'package:leak_detector/src/leak_data_store.dart';
 import 'package:path/path.dart';
 import 'package:sqlite3/sqlite3.dart';
-
-import 'leak_data.dart';
 
 ///database
 class _LeakDataBase {

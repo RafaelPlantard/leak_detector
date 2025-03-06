@@ -1,9 +1,8 @@
 // Copyright (c) 2021, Jiakuo Liu. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'package:leak_detector/src/leak_data.dart';
 import 'package:leak_detector/src/leak_sqlite_store.dart';
-
-import '../leak_detector.dart';
 
 ///Leaked record store.
 abstract class LeakedRecordStore {

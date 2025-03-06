@@ -2,8 +2,7 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-
-import 'popup_window.dart';
+import 'package:leak_detector/src/view/popup_window.dart';
 
 const double maxCloseHeight = 160; //向下滑动关闭的最大高度
 const double maxCloseVelocity = 700.0; //向下滑动关闭的最小速度

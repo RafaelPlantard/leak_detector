@@ -4,12 +4,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:leak_detector/src/leak_analyzer.dart';
+import 'package:leak_detector/src/leak_data.dart';
+import 'package:leak_detector/src/leak_detector.dart';
+import 'package:leak_detector/src/vm_service_utils.dart';
 import 'package:vm_service/vm_service.dart';
-
-import 'leak_analyzer.dart';
-import 'leak_data.dart';
-import 'leak_detector.dart';
-import 'vm_service_utils.dart';
 
 ///check leak task
 abstract class _Task<T> {

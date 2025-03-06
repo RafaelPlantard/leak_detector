@@ -1,10 +1,9 @@
 // Copyright (c) 2021, Jiakuo Liu. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'package:leak_detector/src/leak_data.dart';
+import 'package:leak_detector/src/vm_service_utils.dart';
 import 'package:vm_service/vm_service.dart';
-
-import 'leak_data.dart';
-import 'vm_service_utils.dart';
 
 ///analyze leaked path
 ///引用链分析

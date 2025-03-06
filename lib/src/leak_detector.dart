@@ -6,11 +6,10 @@ import 'dart:collection';
 import 'dart:ffi';
 
 import 'package:flutter/widgets.dart';
-
-import 'leak_data.dart';
-import 'leak_detector_task.dart';
-import 'leak_record_handler.dart';
-import 'vm_service_utils.dart';
+import 'package:leak_detector/src/leak_data.dart';
+import 'package:leak_detector/src/leak_detector_task.dart';
+import 'package:leak_detector/src/leak_record_handler.dart';
+import 'package:leak_detector/src/vm_service_utils.dart';
 
 typedef LeakEventListener = void Function(DetectorEvent event);
 

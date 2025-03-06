@@ -2,8 +2,7 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
-
-import '../leak_detector.dart';
+import 'package:leak_detector/src/leak_detector.dart';
 
 ///daley check leak
 ///Sometimes some pages refer to delayed callback functions

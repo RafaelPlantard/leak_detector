@@ -2,11 +2,10 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-
-import '../leak_data.dart';
-import '../leak_data_store.dart';
-import 'bottom_popup_card.dart';
-import 'popup_window.dart';
+import 'package:leak_detector/src/leak_data.dart';
+import 'package:leak_detector/src/leak_data_store.dart';
+import 'package:leak_detector/src/view/bottom_popup_card.dart';
+import 'package:leak_detector/src/view/popup_window.dart';
 
 const _colorList = [Color(0xff1e7ce4), Color(0xffe4881e)];
 
