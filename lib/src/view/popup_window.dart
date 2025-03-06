@@ -24,7 +24,7 @@ class PopupWindow {
     // overlay管理一层层的Widget，储存了所有需要绘制的Widget
     // 这里可以理解为整个屏幕绘制的Box，即当前整个屏幕
     final RenderBox? overlay =
-        Overlay.of(target)?.context.findRenderObject() as RenderBox?;
+        Overlay.of(target).context.findRenderObject() as RenderBox?;
     if (targetRender != null && overlay != null) {
       // 获取参考widget在overlay（屏幕）中相对位置
       final RelativeRect position = RelativeRect.fromRect(
@@ -271,10 +271,10 @@ class PopupWindowAlign {
 
   const PopupWindowAlign(this.type);
 
-  static const PopupWindowAlign centerRight = const PopupWindowAlign(0);
-  static const PopupWindowAlign topCenter = const PopupWindowAlign(1);
-  static const PopupWindowAlign centerLeft = const PopupWindowAlign(2);
-  static const PopupWindowAlign bottomCenter = const PopupWindowAlign(3);
+  static const PopupWindowAlign centerRight = PopupWindowAlign(0);
+  static const PopupWindowAlign topCenter = PopupWindowAlign(1);
+  static const PopupWindowAlign centerLeft = PopupWindowAlign(2);
+  static const PopupWindowAlign bottomCenter = PopupWindowAlign(3);
 }
 
 /// 底部popupWindow的Route
@@ -300,7 +300,7 @@ class _BottomPopupWindowRoute<T> extends PopupRoute<T> {
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
-    Widget bottomWindow = new MediaQuery.removePadding(
+    Widget bottomWindow = MediaQuery.removePadding(
       context: context,
       removeTop: true,
       child: AnimatedBuilder(
@@ -348,7 +348,7 @@ class _LeftPopupWindowRoute<T> extends PopupRoute<T> {
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
-    Widget bottomWindow = new MediaQuery.removePadding(
+    Widget bottomWindow = MediaQuery.removePadding(
       context: context,
       removeTop: true,
       child: AnimatedBuilder(
@@ -386,14 +386,13 @@ abstract class _PopupWindowLayout extends SingleChildLayoutDelegate {
 
 /// 底部弹窗布局
 class _BottomPopupWindowLayout extends _PopupWindowLayout {
-  _BottomPopupWindowLayout(double progress, {this.contentHeight})
-      : super(progress);
+  _BottomPopupWindowLayout(super.progress, {this.contentHeight});
 
   final double? contentHeight;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return new BoxConstraints(
+    return BoxConstraints(
       minWidth: constraints.maxWidth,
       maxWidth: constraints.maxWidth,
       minHeight: 0.0,
@@ -406,20 +405,19 @@ class _BottomPopupWindowLayout extends _PopupWindowLayout {
   Offset getPositionForChild(Size size, Size childSize) {
     // 计算动画过程中的高度
     double height = size.height - childSize.height * progress;
-    return new Offset(0.0, height);
+    return Offset(0.0, height);
   }
 }
 
 /// 底部弹窗布局
 class _LeftPopupWindowLayout extends _PopupWindowLayout {
-  _LeftPopupWindowLayout(double progress, {this.contentWidth})
-      : super(progress);
+  _LeftPopupWindowLayout(super.progress, {this.contentWidth});
 
   final double? contentWidth;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return new BoxConstraints(
+    return BoxConstraints(
       minWidth: 0,
       maxWidth: contentWidth ?? constraints.maxWidth,
       minHeight: constraints.maxHeight,
@@ -432,6 +430,6 @@ class _LeftPopupWindowLayout extends _PopupWindowLayout {
   Offset getPositionForChild(Size size, Size childSize) {
     // 计算动画过程中的宽
     double width = childSize.width * (progress - 1);
-    return new Offset(width, 0.0);
+    return Offset(width, 0.0);
   }
 }

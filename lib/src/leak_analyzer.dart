@@ -26,11 +26,11 @@ class LeakAnalyzer {
         final stream = Stream.fromIterable(retainingObjectList)
             .asyncMap<RetainingNode?>(_defaultAnalyzeNode);
         List<RetainingNode> retainingPathList = [];
-        (await stream.toList()).forEach((e) {
+        for (var e in (await stream.toList())) {
           if (e != null) {
             retainingPathList.add(e);
           }
-        });
+        }
 
         return LeakedInfo(retainingPathList, retainingPath.gcRootType);
       }
