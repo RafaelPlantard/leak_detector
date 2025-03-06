@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:leak_detector/leak_detector.dart';
 import 'package:logger/logger.dart';
+import 'dart:async';
 
 void main() {
   runApp(MyApp());
@@ -18,14 +19,16 @@ final class _MyAppState extends State<MyApp> {
 
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
   final Logger _logger = Logger();
+  final LeakDetector _leakDetector = LeakDetector();
 
   @override
   void initState() {
     super.initState();
 
-    LeakDetector().init(maxRetainingPath: 300);
-    LeakDetector().onLeakedStream.listen((LeakedInfo info) {
+    _leakDetector.init(maxRetainingPath: 300);
+    _leakDetector.onLeakedStream.listen((LeakedInfo info) {
       // logging to console
+      _logger.d('Leak detected!');
       for (var node in info.retainingPath) {
         _logger.d(node);
       }
@@ -33,8 +36,8 @@ final class _MyAppState extends State<MyApp> {
       //show preview page
       showLeakedInfoPage(_navigatorKey.currentContext!, info);
     });
-    LeakDetector().onEventStream.listen((DetectorEvent event) {
-      _logger.d(event);
+    _leakDetector.onEventStream.listen((DetectorEvent event) {
+      _logger.d('Leak detector event: $event');
 
       if (event.type == DetectorEventType.startAnalyze) {
         setState(() {
@@ -57,14 +60,17 @@ final class _MyAppState extends State<MyApp> {
         '/p2': (_) => LeakPage2(),
         '/p3': (_) => LeakPage3(),
         '/p4': (_) => LeakPage4(),
+        '/p5': (_) => GuaranteedLeakPage(),
       },
       navigatorObservers: [
         //used the LeakNavigatorObserver.
         LeakNavigatorObserver(
           checkLeakDelay: 0,
           shouldCheck: (route) {
-            //You can customize which `route` can be detected
-            return route.settings.name != null && route.settings.name != '/';
+            // You can customize which `route` can be detected
+            final shouldCheck = route.settings.name != null && route.settings.name != '/';
+
+            return shouldCheck;
           },
         ),
       ],
@@ -163,6 +169,23 @@ final class _MyAppState extends State<MyApp> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: Text('read history'),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(_navigatorKey.currentContext!).pushNamed('/p5');
+                },
+                style: ButtonStyle(
+                  side: WidgetStateProperty.resolveWith(
+                    (states) => BorderSide(width: 1, color: Colors.blue),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Text('jump(Guaranteed Leak)'),
                 ),
               ),
             ],
@@ -290,5 +313,107 @@ final class LeakPageState4 extends State<LeakPage4> {
         ],
       ),
     );
+  }
+}
+
+class GuaranteedLeakPage extends StatefulWidget {
+  const GuaranteedLeakPage({super.key});
+
+  @override
+  State<GuaranteedLeakPage> createState() => _GuaranteedLeakPageState();
+}
+
+class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
+  // Static reference to hold the widget
+  static GuaranteedLeakPage? staticReference;
+
+  // Controllers that won't be disposed
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  // Timer that won't be cancelled
+  Timer? _timer;
+
+  // Stream subscription that won't be cancelled
+  StreamSubscription? _subscription;
+
+  // Callback that holds reference to the widget
+  VoidCallback? _callback;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Store static reference
+    staticReference = widget;
+
+    // Start a timer that never ends
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print('Timer tick: ${DateTime.now()}');
+    });
+
+    // Subscribe to a stream that never ends
+    _subscription = Stream.periodic(Duration(seconds: 2)).listen((_) {
+      print('Stream event: ${DateTime.now()}');
+    });
+
+    // Create a callback that holds reference to this widget
+    _callback = () {
+      print('Callback executed: ${widget.toString()}');
+    };
+
+    // Add the callback to a global list
+    GlobalCallbacks.addCallback(_callback!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Guaranteed Leak Page'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: _textController,
+            decoration: InputDecoration(
+              labelText: 'Text Field (Controller not disposed)',
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: 100,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text('Item $index'),
+                  onTap: _callback, // Use the callback that holds reference
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Pop without disposing anything
+          Navigator.of(context).pop();
+        },
+        child: Icon(Icons.arrow_back),
+      ),
+    );
+  }
+}
+
+// Global class to hold callbacks
+class GlobalCallbacks {
+  static final List<VoidCallback> _callbacks = [];
+
+  static void addCallback(VoidCallback callback) {
+    _callbacks.add(callback);
+  }
+
+  static void removeCallback(VoidCallback callback) {
+    _callbacks.remove(callback);
   }
 }
