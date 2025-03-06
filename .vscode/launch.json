@@ -8,14 +8,16 @@
       "name": "leak_detector",
       "request": "launch",
       "cwd": "example",
-      "type": "dart"
+      "type": "dart",
+      "args": ["--disable-dds"]
     },
     {
       "name": "leak_detector (profile mode)",
       "request": "launch",
       "cwd": "example",
       "type": "dart",
-      "flutterMode": "profile"
+      "flutterMode": "profile",
+      "args": ["--disable-dds"]
     },
     {
       "name": "leak_detector (release mode)",
