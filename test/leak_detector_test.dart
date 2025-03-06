@@ -1,12 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vm_service/utils.dart';
+import 'package:vm_service/vm_service_io.dart';
 
-import 'package:leak_detector/leak_detector.dart';
+void main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
-  });
+  final info = await Service.getInfo();
+  final serverUri = info.serverUri;
+
+  if (serverUri != null) {
+    final vmService = await vmServiceConnectUri(convertToWebSocketUrl(serviceProtocolUrl: serverUri).toString());
+    final vm = await vmService.getVM();
+    final version = vm.version;
+
+    expect(version, isNotNull);
+  }
 }
