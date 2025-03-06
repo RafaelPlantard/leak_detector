@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leak_detector/leak_detector.dart';
 import 'package:logger/logger.dart';
-import 'dart:async';
 
 void main() {
   runApp(MyApp());
@@ -324,18 +323,9 @@ class GuaranteedLeakPage extends StatefulWidget {
 }
 
 final class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
-  // Static reference to hold the widget
-  static GuaranteedLeakPage? staticReference;
-
   // Controllers that won't be disposed
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
-  // Timer that won't be cancelled
-  Timer? _timer;
-
-  // Stream subscription that won't be cancelled
-  StreamSubscription? _subscription;
 
   // Callback that holds reference to the widget
   VoidCallback? _callback;
@@ -343,19 +333,6 @@ final class _GuaranteedLeakPageState extends State<GuaranteedLeakPage> {
   @override
   void initState() {
     super.initState();
-
-    // Store static reference
-    staticReference = widget;
-
-    // Start a timer that never ends
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      debugPrint('Timer tick: ${DateTime.now()}');
-    });
-
-    // Subscribe to a stream that never ends
-    _subscription = Stream.periodic(Duration(seconds: 2)).listen((_) {
-      debugPrint('Stream event: ${DateTime.now()}');
-    });
 
     // Create a callback that holds reference to this widget
     _callback = () {
