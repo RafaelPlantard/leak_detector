@@ -1,6 +1,8 @@
 // Copyright (c) 2021, Jiakuo Liu. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:leak_detector/src/leak_detector.dart';
 
@@ -17,7 +19,7 @@ class LeakNavigatorObserver extends NavigatorObserver {
   final int checkLeakDelay;
 
   ///[callback] if 'null',the all route can added to LeakDetector.
-  ///if not 'null', returns ‘true’, then this route will be added to the LeakDetector.
+  ///if not 'null', returns 'true', then this route will be added to the LeakDetector.
   LeakNavigatorObserver(
       {this.checkLeakDelay = _defaultCheckLeakDelay, this.shouldCheck});
 
@@ -46,13 +48,46 @@ class LeakNavigatorObserver extends NavigatorObserver {
     }
   }
 
+  ///Get the 'Element' of our custom page
+  Future<Element?> _getElementByRoute(Route route) async {
+    if (route is! ModalRoute || (shouldCheck != null && !shouldCheck!.call(route))) {
+      return null;
+    }
+
+    // Create a completer to handle the async operation
+    final completer = Completer<Element?>();
+
+    // Schedule the element tree traversal for after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Element? element;
+      //RepaintBoundary
+      route.subtreeContext?.visitChildElements((child) {
+        //Builder
+        child.visitChildElements((child) {
+          if (child.widget is Semantics) {
+            //Semantics
+            child.visitChildElements((child) {
+              //My Page
+              element = child;
+            });
+          } else {
+            element = child;
+          }
+        });
+      });
+      completer.complete(element);
+    });
+
+    return completer.future;
+  }
+
   ///add a object to LeakDetector
   void _add(Route route) {
     assert(() {
       if (route is ModalRoute &&
           (shouldCheck == null || shouldCheck!.call(route))) {
-        route.didPush().then((_) {
-          final element = _getElementByRoute(route);
+        route.didPush().then((_) async {
+          final element = await _getElementByRoute(route);
           if (element != null) {
             final key = _getRouteKey(route);
             watchObjectLeak(element, key); //Element
@@ -71,15 +106,15 @@ class LeakNavigatorObserver extends NavigatorObserver {
   ///check and analyze the route
   void _remove(Route route) {
     assert(() {
-      final element = _getElementByRoute(route);
-      if (element != null) {
-        final key = _getRouteKey(route);
-        if (element is StatefulElement || element is StatelessElement) {
-          //start check
-          LeakDetector().ensureReleaseAsync(key, delay: checkLeakDelay);
+      _getElementByRoute(route).then((element) {
+        if (element != null) {
+          final key = _getRouteKey(route);
+          if (element is StatefulElement || element is StatelessElement) {
+            //start check
+            LeakDetector().ensureReleaseAsync(key, delay: checkLeakDelay);
+          }
         }
-      }
-
+      });
       return true;
     }());
   }
@@ -90,30 +125,6 @@ class LeakNavigatorObserver extends NavigatorObserver {
       LeakDetector().addWatchObject(obj, name);
       return true;
     }());
-  }
-
-  ///Get the ‘Element’ of our custom page
-  Element? _getElementByRoute(Route route) {
-    Element? element;
-    if (route is ModalRoute &&
-        (shouldCheck == null || shouldCheck!.call(route))) {
-      //RepaintBoundary
-      route.subtreeContext?.visitChildElements((child) {
-        //Builder
-        child.visitChildElements((child) {
-          if (child.widget is Semantics) {
-            //Semantics
-            child.visitChildElements((child) {
-              //My Page
-              element = child;
-            });
-          } else {
-            element = child;
-          }
-        });
-      });
-    }
-    return element;
   }
 
   ///generate key by [Route]
