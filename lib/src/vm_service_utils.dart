@@ -125,8 +125,10 @@ class VmServerUtils {
           .invoke(mainIsolate.id!, library.id!, 'keyToObj', [keyRef!.id!]);
       final valueRef = InstanceRef.parse(valueResponse.json);
       return valueRef?.id;
-    } catch (e) {
-      debugPrint('getObjectId $e');
+    } on SentinelException catch (sentinelException) {
+      debugPrint('Object reference expired in getObjectId: ${sentinelException.toString()}');
+    } catch (exception) {
+      debugPrint('getObjectId failed: $exception');
     } finally {
       _objCache.remove(key);
     }
@@ -145,8 +147,10 @@ class VmServerUtils {
             await vms.invoke(mainIsolate.id!, targetId, method, argumentIds);
         final valueRef = InstanceRef.parse(valueResponse.json);
         return valueRef?.valueAsString;
-      } catch (e) {
-        debugPrint('invokeMethod error:$e');
+      } on SentinelException catch (sentinelException) {
+        debugPrint('Object reference expired in invokeMethod: ${sentinelException.toString()}');
+      } catch (exception) {
+        debugPrint('invokeMethod failed: $exception');
       }
     }
     return null;
@@ -161,8 +165,10 @@ class VmServerUtils {
       try {
         Obj object = await vms.getObject(mainIsolate.id!, objId);
         return object;
-      } catch (e) {
-        debugPrint('getObjectInstanceById error:$e');
+      } on SentinelException catch (sentinelException) {
+        debugPrint('Object reference expired in getObjectInstanceById: ${sentinelException.toString()}');
+      } catch (exception) {
+        debugPrint('getObjectInstanceById failed: $exception');
       }
     }
     return null;
@@ -181,8 +187,10 @@ class VmServerUtils {
           final instance = Instance.parse(object.json);
           return instance;
         }
-      } catch (e) {
-        debugPrint('getInstanceByObject error:$e');
+      } on SentinelException catch (sentinelException) {
+        debugPrint('Object reference expired in getInstanceByObject: ${sentinelException.toString()}');
+      } catch (exception) {
+        debugPrint('getInstanceByObject failed: $exception');
       }
     }
     return null;

@@ -194,8 +194,10 @@ class LeakAnalyzer {
       SourceCodeLocation? sourceCodeLocation;
       if (retainingObject.parentField != null && clazz != null) {
         //parentField source code location
+        final fieldValue = retainingObject.parentField;
+        final fieldString = fieldValue is int ? '[$fieldValue]' : fieldValue.toString();
         sourceCodeLocation =
-            await _getSourceCodeLocation(retainingObject.parentField!, clazz);
+            await _getSourceCodeLocation(fieldString, clazz);
       }
 
       String? toString;
